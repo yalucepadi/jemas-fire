@@ -680,7 +680,7 @@
             </div>
             <div class="form-group">
                 <label for="password">Contraseña</label>
-                <input type="password" id="password" placeholder="Ingresa tu contraseña" value="admin123">
+                <input type="password" id="password" placeholder="Ingresa tu contraseña">
             </div>
             <div class="modal-buttons">
                 <button class="btn btn-secondary" onclick="closeLoginModal()">Cancelar</button>
@@ -1109,9 +1109,11 @@
             document.getElementById('loginModal').classList.add('active');
         };
 
-        window.closeLoginModal = function() {
-            document.getElementById('loginModal').classList.remove('active');
-        };
+       window.closeLoginModal = function() {
+    document.getElementById('loginModal').classList.remove('active');
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+};
 
         window.login = function() {
             const username = document.getElementById('username').value;
@@ -1128,11 +1130,13 @@
             }
         };
 
-        window.logout = function() {
-            isLoggedIn = false;
-            document.getElementById('adminPanel').classList.remove('active');
-            alert('Sesión cerrada correctamente');
-        };
+      window.logout = function() {
+    isLoggedIn = false;
+    document.getElementById('adminPanel').classList.remove('active');
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    alert('Sesión cerrada correctamente');
+};
 
         // Iniciar aplicación
         window.onload = function() {
