@@ -612,7 +612,7 @@
     <!-- Header -->
     <header>
         <div class="logo">🛍️ JEMAS</div>
-        <button class="admin-btn" onclick="openLoginModal()">Admin Panel</button>
+        <button class="admin-btn" id="adminBtn" onclick="openLoginModal()">Admin Panel</button>
     </header>
 
     <div class="container">
@@ -1119,24 +1119,27 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            if (username === "admin" && password === "admin123") {
-                isLoggedIn = true;
-                window.closeLoginModal();
-                document.getElementById('adminPanel').classList.add('active');
-                window.renderAdminPanel();
-                alert('¡Bienvenido, Admin! 👋');
-            } else {
-                alert('❌ Credenciales incorrectas');
-            }
+       if (username === "admin" && password === "admin123") {
+    isLoggedIn = true;
+    window.closeLoginModal();
+
+    document.getElementById('adminPanel').classList.add('active');
+    document.getElementById('adminBtn').style.display = 'none';
+
+    window.renderAdminPanel();
+    alert('¡Bienvenido, Admin! 👋');
+}
         };
 
-      window.logout = function() {
+  window.logout = function() {
     isLoggedIn = false;
+
     document.getElementById('adminPanel').classList.remove('active');
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
+    document.getElementById('adminBtn').style.display = 'inline-block';
+
     alert('Sesión cerrada correctamente');
 };
+
 
         // Iniciar aplicación
         window.onload = function() {
