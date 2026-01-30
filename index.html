@@ -674,7 +674,7 @@
 }
 
     </style>
-    <a href="https://wa.me/51921330024?text=He%20visto%20un%20producto%20de%20tu%20tienda%20JEMAS%20y%20quiero%20preguntar%20por%20él" class="contact-float" target="_blank">
+    <a href="https://wa.me/51921330024?text=He%20visto%20un%20producto%20de%20tu%20tienda%20JEMAS%20y%20quiero%20preguntar%20por%20él" class="contact-float" id="contactBtn" target="_blank">
     💬 Contáctame
 </a>
 
@@ -1196,6 +1196,7 @@
 
     document.getElementById('adminPanel').classList.add('active');
     document.getElementById('adminBtn').style.display = 'none';
+    document.getElementById('contactBtn').style.display = 'none';
 
     window.renderAdminPanel();
     alert('¡Bienvenido, Admin! 👋');
@@ -1207,6 +1208,7 @@
 
     document.getElementById('adminPanel').classList.remove('active');
     document.getElementById('adminBtn').style.display = 'inline-block';
+    document.getElementById('contactBtn').style.display = 'flex';
 
     alert('Sesión cerrada correctamente');
 };
