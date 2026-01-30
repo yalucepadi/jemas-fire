@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda - Con Firebase Database</title>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+   
+
 
     <style>
         * {
@@ -747,7 +749,7 @@
             <h2>🔐 Acceso Administrador</h2>
             <div class="form-group">
                 <label for="username">Usuario</label>
-                <input type="text" id="username" placeholder="Ingresa tu usuario" value="admin">
+                <input type="text" id="username" placeholder="Ingresa tu usuario">
             </div>
             <div class="form-group">
                 <label for="password">Contraseña</label>
@@ -800,13 +802,13 @@
             </div>
         </div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <!-- Firebase SDK -->
     <script type="module">
         // IMPORTANTE: Importar Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
+         window.ADMIN_HASH = "0192023a7bbd73250516f069df18b500";
         // ====================================================================
         // CONFIGURACIÓN DE FIREBASE
         // ====================================================================
@@ -1185,23 +1187,34 @@
     document.getElementById('username').value = '';
     document.getElementById('password').value = '';
 };
+window.md5 = function (string) {
+    return CryptoJS.MD5(string).toString();
+};
 
-        window.login = function() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+window.login = function() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
 
-       if (username === "admin" && password === "admin123") {
-    isLoggedIn = true;
-    window.closeLoginModal();
+    const passwordHash = window.md5(password);
 
-    document.getElementById('adminPanel').classList.add('active');
-    document.getElementById('adminBtn').style.display = 'none';
-    document.getElementById('contactBtn').style.display = 'none';
+    if (username === "admin" && passwordHash === window.ADMIN_HASH) {
+        isLoggedIn = true;
+        window.closeLoginModal();
 
-    window.renderAdminPanel();
-    alert('¡Bienvenido, Admin! 👋');
-}
-        };
+        document.getElementById('adminPanel').classList.add('active');
+        document.getElementById('adminBtn').style.display = 'none';
+        document.getElementById('contactBtn').style.display = 'none';
+
+        window.renderAdminPanel();
+        alert('¡Bienvenido, Admin! 👋');
+    } else {
+        alert('❌ Credenciales incorrectas');
+    }
+
+    // limpiar siempre
+    document.getElementById('password').value = '';
+};
+
 
   window.logout = function() {
     isLoggedIn = false;
