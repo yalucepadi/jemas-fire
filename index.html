@@ -291,32 +291,44 @@
         }
 
         /* Modal de Login Admin */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
+ .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+
+    /* 🔥 CLAVE */
+    overflow-y: auto;
+    padding: 20px;
+}
 
         .modal.active {
             display: flex;
         }
 
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 3rem;
-            max-width: 500px;
-            width: 90%;
-            animation: modalPop 0.4s ease;
-        }
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+
+    /* 🔥 CLAVE */
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+
+    margin: auto;
+}
+
+@media (max-height: 700px) {
+    .modal-content {
+        padding: 1.5rem;
+    }
+}
 
         @keyframes modalPop {
             from {
@@ -328,12 +340,14 @@
                 transform: scale(1);
             }
         }
-
-        .modal-content h2 {
-            font-family: 'Archivo Black', sans-serif;
-            margin-bottom: 2rem;
-            color: var(--secondary);
-        }
+.modal-content h2 {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding-bottom: 1rem;
+    z-index: 10;
+}
+    
 
         .form-group {
             margin-bottom: 1.5rem;
@@ -675,8 +689,37 @@
     }
 }
 
+/* ============================= */
+/* ANIMACIÓN SPINNER */
+/* ============================= */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================= */
+/* MEJORAS BOTÓN WHATSAPP */
+/* ============================= */
+.contact-float {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 4px 20px rgba(46, 204, 113, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 30px rgba(46, 204, 113, 0.7);
+    }
+}
+
+.contact-float:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 25px rgba(46, 204, 113, 0.6);
+}
+
+
     </style>
-    <a href="https://wa.me/51921330024?text=He%20visto%20un%20producto%20de%20tu%20tienda%20JEMAS%20y%20quiero%20preguntar%20por%20él" class="contact-float" id="contactBtn" target="_blank">
+    <a href="https://wa.me/51921330024?text=He%20visto%20un%20producto%20de%20tu%20tienda%20JEMAS%20y%20quiero%20preguntar%20por%20él" class="contact-float" id="contactBtn" target="_blank" >
     💬 Contáctame
 </a>
 
@@ -732,10 +775,7 @@
             <h2 class="section-title">Nuestros Productos</h2>
             <div class="category-filters" id="categoryFilters">
                 <button class="category-btn active" onclick="filterCategory('todos')">Todos</button>
-                <button class="category-btn" onclick="filterCategory('peluches')">🧸 Peluches</button>
-                <button class="category-btn" onclick="filterCategory('ropa')">👕 Ropa</button>
-                <button class="category-btn" onclick="filterCategory('accesorios')">👜 Accesorios</button>
-                <button class="category-btn" onclick="filterCategory('juguetes')">🎲 Juguetes</button>
+                <!-- Las categorías se cargarán automáticamente desde GitHub -->
             </div>
             <div class="products-grid" id="productsGrid">
                 <div class="loading">Cargando productos...</div>
@@ -773,9 +813,7 @@
             <div class="form-group">
                 <label for="productCategory">Categoría</label>
                 <select id="productCategory">
-                    <option value="peluches">Peluches</option>
-                    <option value="ropa">Ropa</option>
-                    <option value="accesorios">Accesorios</option>
+                    <option value="">🔄 Cargando categorías...</option>
                 </select>
             </div>
             <div class="form-group">
@@ -786,10 +824,40 @@
                 <label for="productDescription">Descripción</label>
                 <input type="text" id="productDescription" placeholder="Descripción breve">
             </div>
+            
+            <!-- 📸 Selector de imágenes desde GitHub -->
             <div class="form-group">
-                <label for="productImage">URL de la Imagen (desde GitHub)</label>
-                <input type="url" id="productImage" placeholder="https://raw.githubusercontent.com/...">
+                <label>📁 Seleccionar Imagen desde GitHub</label>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <select id="imageCategory" onchange="loadImagesFromGitHub()" style="flex: 1; padding: 1rem; border: 2px solid var(--light); border-radius: 10px; font-size: 1rem;">
+                        <option value="">🔄 Cargando carpetas...</option>
+                    </select>
+                    <button type="button" onclick="loadFoldersFromGitHub()" class="btn btn-primary" style="flex: 0 0 auto; padding: 0 1.5rem;" title="Recargar carpetas">🔄</button>
+                    <button type="button" onclick="loadImagesFromGitHub()" class="btn btn-primary" style="flex: 0 0 auto; padding: 0 1.5rem;" title="Cargar imágenes">📂</button>
+                </div>
+                
+                <div id="imageLoader" style="display: none; text-align: center; padding: 1rem; color: var(--secondary);">
+                    <div style="display: inline-block; width: 20px; height: 20px; border: 3px solid var(--primary); border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite;"></div>
+                    Cargando imágenes...
+                </div>
+                
+                <input type="text" id="imageSearch" placeholder="🔍 Buscar imagen por nombre..." onkeyup="searchImageByName()" style="width: 100%; padding: 0.8rem; border: 2px solid var(--light); border-radius: 10px; font-size: 0.9rem; margin-bottom: 10px;">
+                
+                <select id="imageSelector" size="5" style="width: 100%; padding: 1rem; border: 2px solid var(--light); border-radius: 10px; font-size: 1rem; margin-bottom: 10px;" onchange="updateImagePreview()">
+                    <option value="">-- Selecciona carpeta y clic en 📂 (busca en subcarpetas) --</option>
+                </select>
+                
+                <div id="imagePreview" style="display: none; margin-top: 10px; text-align: center; background: var(--light); padding: 1rem; border-radius: 10px;">
+                    <img id="previewImg" src="" alt="Vista previa" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <p style="margin-top: 10px; font-size: 0.85rem; color: #666;" id="imageName"></p>
+                </div>
+                
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 2px dashed var(--light);">
+                    <label for="productImage" style="font-size: 0.9rem; color: #666;">✏️ O pega una URL manualmente:</label>
+                    <input type="url" id="productImage" placeholder="https://raw.githubusercontent.com/..." style="width: 100%; padding: 1rem; border: 2px solid var(--light); border-radius: 10px; font-size: 1rem; margin-top: 5px;">
+                </div>
             </div>
+            
             <div class="form-group">
                 <label>
                     <input type="checkbox" id="productFeatured" style="width: auto; margin-right: 10px;">
@@ -809,6 +877,27 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
          window.ADMIN_HASH = "0192023a7bbd73250516f069df18b500";
+
+ window.CONTACT_LINKS_BY_CATEGORY = {
+    // Versión minúsculas (como aparecen las carpetas en GitHub)
+    "accesorios": "https://wa.me/51921330024?text=Hola%20JEMAS,%20me%20interesan%20los%20accesorios",
+    "peluches": "https://wa.me/51921330024?text=Hola,%20quiero%20comprar%20un%20peluche",
+    "ropa": "https://wa.me/51921330024?text=Hola,%20busco%20ropa",
+    "ropainterior": "https://wa.me/51920452019?text=Se%C3%B1ito%20Lizette%20necesito%20ropa%20interior%20de%20su%20tienda%20JEMAS",
+    "juguetes": "https://wa.me/51921330024?text=Hola,%20me%20interesan%20juguetes",
+    
+    // Aliases con mayúsculas (por si acaso)
+    "Accesorios": "https://wa.me/51921330024?text=Hola%20JEMAS,%20me%20interesan%20los%20accesorios",
+    "Peluches": "https://wa.me/51921330024?text=Hola,%20quiero%20comprar%20un%20peluche",
+    "Ropa": "https://wa.me/51921330024?text=Hola,%20busco%20ropa",
+    "Ropa Interior": "https://wa.me/51920452019?text=Se%C3%B1ito%20Lizette%20necesito%20ropa%20interior%20de%20su%20tienda%20JEMAS",
+    "RopaInterior": "https://wa.me/51920452019?text=Se%C3%B1ito%20Lizette%20necesito%20ropa%20interior%20de%20su%20tienda%20JEMAS",
+    "Juguetes": "https://wa.me/51921330024?text=Hola,%20me%20interesan%20juguetes",
+    
+    // Link por defecto
+    "default": "https://wa.me/51921330024?text=Hola,%20vi%20tu%20tienda%20JEMAS"
+};
+
         // ====================================================================
         // CONFIGURACIÓN DE FIREBASE
         // ====================================================================
@@ -1001,31 +1090,85 @@
             renderCarousel();
             window.renderAdminPanel();
         }
+window.getContactLinkByCategory = function (category) {
+    if (!category) {
+        console.log('⚠️ Categoría vacía, usando default');
+        return window.CONTACT_LINKS_BY_CATEGORY.default;
+    }
 
+    console.log('🔍 Buscando link para categoría:', category);
+    console.log('📋 Links disponibles:', Object.keys(window.CONTACT_LINKS_BY_CATEGORY));
+
+    // 1. Buscar coincidencia exacta
+    if (window.CONTACT_LINKS_BY_CATEGORY[category]) {
+        console.log('✅ Match exacto encontrado:', category);
+        return window.CONTACT_LINKS_BY_CATEGORY[category];
+    }
+
+    // 2. Normalizar y buscar (sin espacios, sin mayúsculas)
+    const normalized = category.toLowerCase().replace(/\s+/g, '').replace(/-/g, '').replace(/_/g, '');
+    console.log('🔄 Buscando versión normalizada:', normalized);
+    
+    for (const key in window.CONTACT_LINKS_BY_CATEGORY) {
+        if (key === 'default') continue;
+        
+        const normalizedKey = key.toLowerCase().replace(/\s+/g, '').replace(/-/g, '').replace(/_/g, '');
+        
+        if (normalizedKey === normalized) {
+            console.log('✅ Match normalizado encontrado! categoria:', category, '→ key:', key);
+            return window.CONTACT_LINKS_BY_CATEGORY[key];
+        }
+    }
+
+    console.log('⚠️ No se encontró match, usando default');
+    return window.CONTACT_LINKS_BY_CATEGORY.default;
+};
+
+
+window.updateContactButtonByCategory = function (category) {
+    const btn = document.getElementById('contactBtn');
+    if (!btn) return;
+
+    btn.href = window.getContactLinkByCategory(category);
+};
         // Exponer funciones globalmente
-        window.saveProduct = async function() {
-            const productData = {
-                name: document.getElementById('productName').value,
-                category: document.getElementById('productCategory').value,
-                price: parseFloat(document.getElementById('productPrice').value),
-                description: document.getElementById('productDescription').value,
-                image: document.getElementById('productImage').value,
-                featured: document.getElementById('productFeatured').checked
-            };
+window.saveProduct = async function() {
 
-            if (!productData.name || !productData.price || !productData.image) {
-                alert('Por favor completa todos los campos obligatorios');
-                return;
-            }
+    // 🔥 FORZAR IMAGEN DESDE EL COMBO
+    const selector = document.getElementById('imageSelector');
+    if (!document.getElementById('productImage').value && selector.value) {
+        document.getElementById('productImage').value = selector.value;
+    }
 
-            window.closeProductModal();
+    const productData = {
+        name: document.getElementById('productName').value,
+        category: document.getElementById('productCategory').value,
+        price: parseFloat(document.getElementById('productPrice').value),
+        description: document.getElementById('productDescription').value,
+        image: document.getElementById('productImage').value,
+        featured: document.getElementById('productFeatured').checked
+    };
+console.log('NAME:', productData.name);
+console.log('PRICE:', productData.price);
+console.log('IMAGE:', productData.image);
+    if (
+        productData.name.trim() === '' ||
+        isNaN(productData.price) ||
+        productData.image.trim() === ''
+    ) {
+        alert('Por favor completa todos los campos obligatorios');
+        return;
+    }
 
-            if (useFirebase) {
-                await saveProductToFirebase(productData);
-            } else {
-                saveProductLocal(productData);
-            }
-        };
+    window.closeProductModal();
+
+    if (useFirebase) {
+        await saveProductToFirebase(productData);
+    } else {
+        saveProductLocal(productData);
+    }
+};
+
 
         window.deleteProduct = async function(id) {
             if (!confirm('¿Estás seguro de eliminar este producto?')) return;
@@ -1051,18 +1194,23 @@
             document.getElementById('productFeatured').checked = product.featured;
             document.getElementById('productModal').classList.add('active');
         };
+window.openAddProductModal = function() {
+    editingProductId = null;
 
-        window.openAddProductModal = function() {
-            editingProductId = null;
-            document.getElementById('productModalTitle').textContent = 'Agregar Producto';
-            document.getElementById('productName').value = '';
-            document.getElementById('productCategory').value = 'peluches';
-            document.getElementById('productPrice').value = '';
-            document.getElementById('productDescription').value = '';
-            document.getElementById('productImage').value = '';
-            document.getElementById('productFeatured').checked = false;
-            document.getElementById('productModal').classList.add('active');
-        };
+    document.getElementById('productModalTitle').textContent = 'Agregar Producto';
+    document.getElementById('productName').value = '';
+    document.getElementById('productCategory').value = '';
+    document.getElementById('productPrice').value = '';
+    document.getElementById('productDescription').value = '';
+    document.getElementById('productFeatured').checked = false;
+
+    // 🔥 LIMPIEZA CLAVE (DESKTOP FIX)
+    document.getElementById('imageSelector').selectedIndex = 0;
+    document.getElementById('productImage').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+
+    document.getElementById('productModal').classList.add('active');
+};
 
         window.closeProductModal = function() {
             document.getElementById('productModal').classList.remove('active');
@@ -1144,6 +1292,17 @@
             });
             event.target.classList.add('active');
             renderProducts(category);
+            
+            // 🆕 Actualizar botón de contacto según categoría
+            if (category !== 'todos') {
+                window.updateContactButtonByCategory(category);
+            } else {
+                // Si es "todos", volver al link por defecto
+                const btn = document.getElementById('contactBtn');
+                if (btn) {
+                    btn.href = window.CONTACT_LINKS_BY_CATEGORY.default;
+                }
+            }
         };
 
         // Carrusel
@@ -1227,11 +1386,291 @@ window.login = function() {
 };
 
 
+        // ====================================================================
+        // 📸 CARGA DE IMÁGENES DESDE GITHUB
+        // ====================================================================
+        
+        // CONFIGURACIÓN - Cambia esto con tu información de GitHub
+        const GITHUB_CONFIG = {
+            username: 'yalucepadi',           // Tu usuario de GitHub
+            repo: 'imagenes-tienda',          // Nombre de tu repositorio
+            branch: 'master'                  // Rama (master o main)
+        };
+
+
+        // Mapeo de emojis por categoría
+        const CATEGORY_EMOJIS = {
+            'accesorios': '👜',
+            'peluche': '🧸',
+            'ropa': '👕',
+            'juguetes': '🎲',
+            'ropadeportiva': '🏃',
+            'ropainterior': '👙',
+            'zapatos': '👟',
+            'bolsos': '👜',
+            'joyeria': '💎',
+            'electronica': '📱',
+            'hogar': '🏠',
+            'default': '📁'
+        };
+
+        // Función para obtener emoji de categoría
+        function getCategoryEmoji(folderName) {
+            const name = folderName.toLowerCase();
+            return CATEGORY_EMOJIS[name] || CATEGORY_EMOJIS['default'];
+        }
+
+        // Función para formatear nombre de carpeta
+        function formatCategoryName(folderName) {
+            // Convertir de snake_case o camelCase a Title Case
+            return folderName
+                .replace(/([A-Z])/g, ' $1') // camelCase
+                .replace(/[_-]/g, ' ')       // snake_case o kebab-case
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+
+        // Variable global para almacenar carpetas
+        let availableFolders = [];
+
+        // Función para cargar carpetas desde GitHub
+        window.loadFoldersFromGitHub = async function() {
+            const categorySelector = document.getElementById('imageCategory');
+            const productCategorySelector = document.getElementById('productCategory');
+            
+            try {
+                categorySelector.innerHTML = '<option value="">⏳ Cargando carpetas...</option>';
+                
+                // URL de la API de GitHub para listar contenido raíz
+                const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents?ref=${GITHUB_CONFIG.branch}`;
+                
+                console.log('📡 Buscando carpetas en:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                
+                const contents = await response.json();
+                
+                // Filtrar solo carpetas (directories)
+                const folders = contents.filter(item => item.type === 'dir');
+                
+                if (folders.length === 0) {
+                    categorySelector.innerHTML = '<option value="">No se encontraron carpetas</option>';
+                    productCategorySelector.innerHTML = '<option value="">No hay categorías</option>';
+                    return;
+                }
+                
+                // Guardar carpetas globalmente
+                availableFolders = folders.map(f => f.name);
+                
+                // Actualizar selector de imágenes
+                categorySelector.innerHTML = '<option value="">-- Selecciona carpeta --</option>';
+                folders.forEach(folder => {
+                    const option = document.createElement('option');
+                    option.value = folder.name;
+                    const emoji = getCategoryEmoji(folder.name);
+                    const displayName = formatCategoryName(folder.name);
+                    option.textContent = `${emoji} ${displayName}`;
+                    categorySelector.appendChild(option);
+                });
+                
+                // Actualizar selector de categorías del producto
+                productCategorySelector.innerHTML = '<option value="">-- Selecciona categoría --</option>';
+                folders.forEach(folder => {
+                    const option = document.createElement('option');
+                    option.value = folder.name;
+                    const displayName = formatCategoryName(folder.name);
+                    option.textContent = displayName;
+                    productCategorySelector.appendChild(option);
+                });
+                
+                // Actualizar botones de filtro en la página principal
+                updateCategoryFilters(folders);
+                
+                console.log(`✅ ${folders.length} carpetas encontradas:`, folders.map(f => f.name));
+                
+            } catch (error) {
+                console.error('Error al cargar carpetas:', error);
+                categorySelector.innerHTML = '<option value="">Error al cargar carpetas</option>';
+                productCategorySelector.innerHTML = '<option value="">Error al cargar</option>';
+                
+                alert(`❌ No se pudieron cargar las carpetas.
+
+Verifica:
+1. Repositorio: ${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}
+2. Que el repositorio sea PÚBLICO
+3. Branch: ${GITHUB_CONFIG.branch}
+
+Error: ${error.message}`);
+            }
+        };
+
+        // Función para actualizar botones de filtro
+        function updateCategoryFilters(folders) {
+            const filtersContainer = document.getElementById('categoryFilters');
+            
+            // Mantener el botón "Todos"
+            const todosBtn = filtersContainer.querySelector('.category-btn');
+            filtersContainer.innerHTML = '';
+            filtersContainer.appendChild(todosBtn);
+            
+            // Agregar botón por cada carpeta
+            folders.forEach(folder => {
+                const button = document.createElement('button');
+                button.className = 'category-btn';
+                button.onclick = () => filterCategory(folder.name);
+                
+                const emoji = getCategoryEmoji(folder.name);
+                const displayName = formatCategoryName(folder.name);
+                button.textContent = `${emoji} ${displayName}`;
+                
+                filtersContainer.appendChild(button);
+            });
+        }
+
+
+        // Función recursiva para buscar imágenes en carpetas anidadas
+        async function findImagesRecursively(path = '') {
+            const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${path}?ref=${GITHUB_CONFIG.branch}`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) return [];
+                
+                const items = await response.json();
+                let allImages = [];
+                
+                for (const item of items) {
+                    if (item.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(item.name)) {
+                        // Es una imagen
+                        allImages.push({
+                            name: item.name,
+                            path: item.path,
+                            url: item.download_url,
+                            fullPath: item.path // Guardar ruta completa
+                        });
+                    } else if (item.type === 'dir') {
+                        // Es una carpeta, explorar recursivamente
+                        const subImages = await findImagesRecursively(item.path);
+                        allImages = allImages.concat(subImages);
+                    }
+                }
+                
+                return allImages;
+            } catch (error) {
+                console.error(`Error explorando ${path}:`, error);
+                return [];
+            }
+        }
+
+        // Función para cargar imágenes desde GitHub (con soporte de carpetas anidadas)
+        window.loadImagesFromGitHub = async function() {
+            const folder = document.getElementById('imageCategory').value;
+            const selector = document.getElementById('imageSelector');
+            const loader = document.getElementById('imageLoader');
+            
+            if (!folder) {
+                alert('Por favor selecciona una carpeta primero');
+                return;
+            }
+            
+            // Mostrar loader
+            loader.style.display = 'block';
+            selector.innerHTML = '<option value="">🔍 Buscando imágenes en todas las subcarpetas...</option>';
+            
+            try {
+                console.log('📡 Explorando recursivamente:', folder);
+                
+                // Buscar imágenes recursivamente
+                const imageFiles = await findImagesRecursively(folder);
+                
+                if (imageFiles.length === 0) {
+                    selector.innerHTML = '<option value="">❌ No se encontraron imágenes (ni en subcarpetas)</option>';
+                    loader.style.display = 'none';
+                    return;
+                }
+                
+                // Ordenar por ruta para mejor organización
+                imageFiles.sort((a, b) => a.path.localeCompare(b.path));
+                
+                // Construir opciones del selector
+                selector.innerHTML = '<option value="">-- Selecciona una imagen --</option>';
+                
+                imageFiles.forEach(file => {
+                    const option = document.createElement('option');
+                    option.value = file.url;
+                    
+                    // Mostrar ruta relativa desde la carpeta principal
+                    const relativePath = file.path.replace(folder + '/', '');
+                    option.textContent = relativePath;
+                    
+                    selector.appendChild(option);
+                });
+                
+                loader.style.display = 'none';
+                console.log(`✅ ${imageFiles.length} imágenes encontradas en "${folder}" (incluyendo subcarpetas)`);
+                
+            } catch (error) {
+                console.error('Error al cargar imágenes:', error);
+                selector.innerHTML = '<option value="">Error al cargar imágenes</option>';
+                loader.style.display = 'none';
+                
+                alert(`❌ No se pudieron cargar las imágenes.
+
+Verifica:
+1. Usuario: ${GITHUB_CONFIG.username}
+2. Repositorio: ${GITHUB_CONFIG.repo}
+3. Que el repositorio sea público
+4. Que exista la carpeta "${folder}"
+
+Error: ${error.message}`);
+            }
+        };
+
+        window.updateImagePreview = function() {
+           const selector = document.getElementById('imageSelector');
+    const selectedUrl = selector.value;
+
+    if (!selectedUrl) return;
+
+    // Vista previa
+    document.getElementById('previewImg').src = selectedUrl;
+    document.getElementById('imagePreview').style.display = 'block';
+    document.getElementById('imageName').textContent =
+        selector.options[selector.selectedIndex].text;
+
+    // 🔥 ESTA ES LA LÍNEA CLAVE
+    document.getElementById('productImage').value = selectedUrl;
+        };
+
+        // Función para buscar imagen por nombre
+        window.searchImageByName = function() {
+            const searchTerm = document.getElementById('imageSearch').value.toLowerCase();
+            const selector = document.getElementById('imageSelector');
+            const options = selector.options;
+            
+            for (let i = 0; i < options.length; i++) {
+                const optionText = options[i].textContent.toLowerCase();
+                if (optionText.includes(searchTerm) || searchTerm === '') {
+                    options[i].style.display = '';
+                } else {
+                    options[i].style.display = 'none';
+                }
+            }
+        };
+
+
         // Iniciar aplicación
         window.onload = function() {
             initFirebase();
             startAutoCarousel();
+            loadFoldersFromGitHub(); // 🆕 Cargar carpetas automáticamente
         };
+       
     </script>
 </body>
 </html>
