@@ -922,44 +922,8 @@
         let useFirebase = false;
 
         // Datos de ejemplo (fallback si Firebase no está configurado)
-        const sampleProducts = [
-            {
-                id: "1",
-                name: "pulsera-blanca",
-                category: "accesorios",
-                price: 9.00,
-                description: "pulsera blanca con detalles pineaple",
-                image: "https://raw.githubusercontent.com/yalucepadi/imagenes-tienda/master/accesorios/accesorio-1.jpeg",
-                featured: true
-            },
-            {
-                id: "2",
-                name: "Camiseta Vintage",
-                category: "ropa",
-                price: 24.99,
-                description: "Estilo retro, 100% algodón",
-                image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
-                featured: true
-            },
-            {
-                id: "3",
-                name: "Mochila Escolar",
-                category: "accesorios",
-                price: 35.50,
-                description: "Resistente y espaciosa",
-                image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500",
-                featured: true
-            },
-            {
-                id: "4",
-                name: "Set de Construcción",
-                category: "juguetes",
-                price: 29.99,
-                description: "200 piezas de diversión",
-                image: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=500",
-                featured: false
-            }
-        ];
+        // Datos de ejemplo vacíos - Solo se mostrarán productos de Firebase
+        const sampleProducts = [];
 
         // Inicializar Firebase
         function initFirebase() {
@@ -1224,7 +1188,21 @@ window.openAddProductModal = function() {
                 : products.filter(p => p.category === filter);
 
             if (filteredProducts.length === 0) {
-                grid.innerHTML = '<p class="loading">No hay productos en esta categoría</p>';
+                if (products.length === 0) {
+                    // No hay productos en absoluto
+                    grid.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                            <h3 style="color: var(--secondary); margin-bottom: 1rem;">📦 No hay productos aún</h3>
+                            <p style="color: #666; margin-bottom: 1.5rem;">Agrega productos desde el Panel de Administración</p>
+                            <button onclick="openLoginModal()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 50px; cursor: pointer; font-weight: 600;">
+                                🔐 Ir al Admin Panel
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    // Hay productos pero no en esta categoría
+                    grid.innerHTML = '<p class="loading">No hay productos en esta categoría</p>';
+                }
                 return;
             }
 
@@ -1247,7 +1225,14 @@ window.openAddProductModal = function() {
             const featured = products.filter(p => p.featured);
 
             if (featured.length === 0) {
-                track.innerHTML = '<div class="loading">No hay primicias disponibles</div>';
+                track.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; text-align: center; padding: 2rem;">
+                        <div>
+                            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">✨ Próximamente</h2>
+                            <p style="font-size: 1.2rem; opacity: 0.9;">Agrega productos destacados desde el Panel de Administración</p>
+                        </div>
+                    </div>
+                `;
                 dots.innerHTML = '';
                 return;
             }
